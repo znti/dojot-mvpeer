@@ -2,9 +2,16 @@ const path = require('path');
 const express = require('express');
 const app = express();
 
-let serverPort = 8080;
+const configs = require('./configs');
 
+const DojotHelper = require('./src/helpers/DojotHelper.js');
+
+let serverPort = configs.server.port;
 let baseAppDir = path.join(__dirname, 'build');
+
+console.log('helper', DojotHelper)
+let dh = new DojotHelper(configs.dojot);
+dh.ping();
 
 /*
  * web pages server
