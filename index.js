@@ -20,23 +20,28 @@ dh.ping();
 
 app.get('/templates', (req, res) => {
         console.log('Loading templates list');
-	dh.getTemplates().then(templates => {
-		console.log('Loaded templates list:', templates);
-		res.status(200).send(templates);
+	dh.getTemplates().then((response) => {
+		console.log('Got response from getTemplates');
+		console.log(response);
+		res.status(response.status).send(response.data);
 	}).catch((err) => {
-		res.status(err.status).send(err.message)
+		console.log('Got error from getTemplates', err);
+		let response = err.response;
+		res.status(response.status).send(response.data);
 	});
 });
 
 app.post('/templates', (req, res) => {
         let template = req.body;
         console.log('Adding', template, 'to templates list');
-	dh.addTemplate(template).then((result) => {
-		console.log('Got result from addTemplate');
-		res.status(201).send({message: 'template created'});
+	dh.addTemplate(template).then((response) => {
+		console.log('Got response from addTemplate');
+		console.log(response);
+		res.status(response.status).send(response.data);
 	}).catch((err) => {
 		console.log('Got error from addTemplate', err);
-		res.status(err.status).send(err.message)
+		let response = err.response;
+		res.status(response.status).send(response.data);
 	});
 });
 
@@ -45,6 +50,7 @@ app.get('/devices', (req, res) => {
 	dh.getDevices().then(devices => {
 		res.status(200).send(devices);
 	}).catch((err) => {
+		console.log('Got error from getDevices');
 		res.status(err.status).send(err.message)
 	});
 });
@@ -57,7 +63,7 @@ app.post('/devices', (req, res) => {
 		console.log(response);
 		res.status(response.status).send(response.data);
 	}).catch((err) => {
-		console.log('Got error from addTemplate');
+		console.log('Got error from addDevices');
 		let response = err.response;
 		res.status(response.status).send(response.data);
 	});

@@ -36,36 +36,13 @@ module.exports = class DojotHelper {
 	}
 
 	getTemplates() {
-		return new Promise((resolve, reject) => {
-			console.log('Loading templates');
-			this.httpClient.get(this.configs.templates)
-			.then(response => {
-
-				let templates = response.data.templates;
-				let total = templates.length || 0;
-				console.log('Loaded', total, 'templates');
-				resolve(templates);
-			})
-			.catch((err) => {
-				reject('err');
-			});
-		});
+		console.log('Loading templates');
+		return this.httpClient.get(this.configs.templates)
 	}
 
 	addTemplate(templateData) {
-		return new Promise((resolve, reject) => {
-			console.log('Adding template', templateData);
-			this.httpClient.post(this.configs.templates, templateData)
-			.then(response => {
-				console.log('Resolving addTemplate with response');
-				console.log(response);
-				resolve(response);
-			})
-			.catch((err) => {
-				console.log('Rejecting addTemplate with error', err);
-				reject('err');
-			});
-		});
+		console.log('Adding template', templateData);
+		return this.httpClient.post(this.configs.templates, templateData)
 	}
 
 	ping() {
