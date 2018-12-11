@@ -20,7 +20,7 @@ module.exports = class HttpHelper {
 		console.log('Setting auth token as', jwt);
 		this.http = axios.create({
 			baseURL: this.configs.server,
-			timeout: 1000,
+			timeout: 5000,
 			headers: {
 				'Authorization': `Bearer ${jwt}`,
 				'Content-Type': 'application/json',

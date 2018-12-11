@@ -18,55 +18,52 @@ dh.ping();
  * Web app helper endpoints
  */
 
-app.get('/templates', (req, res) => {
-        console.log('Loading templates list');
-	dh.getTemplates().then((response) => {
-		console.log('Got response from getTemplates');
-		console.log(response);
+function handleApiCall(exec, res, data) {
+	exec().then((response) => {
+		console.log('Got response');
 		res.status(response.status).send(response.data);
-	}).catch((err) => {
-		console.log('Got error from getTemplates', err);
-		let response = err.response;
+	}).catch((error) => {
+		console.log('Error while executing');
+		let response = error.response;
 		res.status(response.status).send(response.data);
 	});
+}
+
+app.get('/api/*', (req, res) => {
+	let resource = req. params[0];
+	console.log('Loading', resource);
+	
+	switch(resource) {
+		case 'templates':
+			handleApiCall(() => { return dh.getTemplates() }, res);
+			break;
+		case 'devices':
+			handleApiCall(() => { return dh.getDevices() }, res);
+			break;
+		default:
+			console.log('Beep! 404..');
+			res.status(404).send();
+	}
+
 });
 
-app.post('/templates', (req, res) => {
-        let template = req.body;
-        console.log('Adding', template, 'to templates list');
-	dh.addTemplate(template).then((response) => {
-		console.log('Got response from addTemplate');
-		console.log(response);
-		res.status(response.status).send(response.data);
-	}).catch((err) => {
-		console.log('Got error from addTemplate', err);
-		let response = err.response;
-		res.status(response.status).send(response.data);
-	});
-});
+app.post('/api/*', (req, res) => {
+	let resource = req. params[0];
+	let data = req.body;
+	console.log('Posting', data, 'on', resource);
+	
+	switch(resource) {
+		case 'templates':
+			handleApiCall(() => { return dh.addTemplate(data) }, res);
+			break;
+		case 'devices':
+			handleApiCall(() => { return dh.addDevice(data) }, res);
+			break;
+		default:
+			console.log('Beep! 404..');
+			res.status(404).send();
+	}
 
-app.get('/devices', (req, res) => {
-	console.log('Loading devices list');
-	dh.getDevices().then(devices => {
-		res.status(200).send(devices);
-	}).catch((err) => {
-		console.log('Got error from getDevices');
-		res.status(err.status).send(err.message)
-	});
-});
-
-app.post('/devices', (req, res) => {
-	let device = req.body;
-	console.log('Adding', device, 'to devices list');
-	dh.addDevice(device).then((response) => {
-		console.log('Got response from addDevice');
-		console.log(response);
-		res.status(response.status).send(response.data);
-	}).catch((err) => {
-		console.log('Got error from addDevices');
-		let response = err.response;
-		res.status(response.status).send(response.data);
-	});
 });
 
 /*
