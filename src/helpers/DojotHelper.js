@@ -9,7 +9,7 @@ module.exports = class DojotHelper {
 
 		console.log('Retrieving access token');
 		let credentials = {username: 'admin', passwd: 'admin'};
-		this.httpClient.post(this.configs.auth, credentials, (err, res) => {
+		this.httpClient.post(this.configs.auth, credentials).then(res => {//, (err, res) => {
 			let jwt = res.data.jwt;
 			console.log('Got token data', jwt);
 			this.httpClient.setAuthToken(jwt, (err) => {
@@ -21,6 +21,39 @@ module.exports = class DojotHelper {
 
 				console.log('Initialization completed.');
 
+			});
+		});
+	}
+
+	getTemplates() {
+		return new Promise((resolve, reject) => {
+			console.log('Loading templates');
+			this.httpClient.get(this.configs.templates)
+			.then(response => {
+
+				let templates = response.data.templates;
+				let total = templates.length || 0;
+				console.log('Loaded', total, 'templates');
+				resolve(templates);
+			})
+			.catch((err) => {
+				reject('err');
+			});
+		});
+	}
+
+	addTemplate(templateData) {
+		return new Promise((resolve, reject) => {
+			console.log('Adding template', templateData);
+			this.httpClient.post(this.configs.templates, templateData)
+			.then(response => {
+				console.log('Resolving addTemplate with response');
+				console.log(response);
+				resolve(response);
+			})
+			.catch((err) => {
+				console.log('Rejecting addTemplate with error', err);
+				reject('err');
 			});
 		});
 	}

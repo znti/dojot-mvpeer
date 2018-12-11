@@ -21,27 +21,21 @@ module.exports = class HttpHelper {
 		this.http = axios.create({
 			baseURL: this.configs.server,
 			timeout: 1000,
-			headers: {'Authorization': `Bearer ${jwt}` }
+			headers: {
+				'Authorization': `Bearer ${jwt}`,
+				'Content-Type': 'application/json',
+			}
 		});
 		cb && cb();
 	}
 	
-	get(endpoint, callback) {
+	get(endpoint) {
 		console.log('Requesting GET', endpoint);
+		return this.http.get(endpoint);
 	}
 
-	post(endpoint, data, callback) {
+	post(endpoint, data) {
 		console.log('Requesting POST', endpoint, 'with data', data);
-		this.http.post(endpoint, data)
-		.then(response => {
-			callback(false, response);
-			//console.log('Got response code', response.status, 'with data', response.data );
-		})
-		.catch(error => {
-			let response = error.response;
-			callback(true, response);
-			console.error(' Failed with response code', response.status, 'and data', response.data );
-		});
-
+		return this.http.post(endpoint, data);
 	}
 }

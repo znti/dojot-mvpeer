@@ -13,8 +13,4 @@ module.exports = {
 		devices: '/device',
 	},
 
-	ping: () => {
-		console.log('OMG');
-	},
-
 }
