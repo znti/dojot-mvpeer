@@ -25,6 +25,16 @@ module.exports = class DojotHelper {
 		});
 	}
 
+	getDevices() {
+		console.log('Loading devices');
+		return this.httpClient.get(this.configs.devices);
+	}
+
+	addDevice(deviceData) {
+		console.log('Adding device', deviceData);
+		return this.httpClient.post(this.configs.devices, deviceData);
+	}
+
 	getTemplates() {
 		return new Promise((resolve, reject) => {
 			console.log('Loading templates');

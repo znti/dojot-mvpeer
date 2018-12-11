@@ -24,7 +24,7 @@ app.get('/templates', (req, res) => {
 		console.log('Loaded templates list:', templates);
 		res.status(200).send(templates);
 	}).catch((err) => {
-		res.status(400).send(err);
+		res.status(err.status).send(err.message)
 	});
 });
 
@@ -36,7 +36,30 @@ app.post('/templates', (req, res) => {
 		res.status(201).send({message: 'template created'});
 	}).catch((err) => {
 		console.log('Got error from addTemplate', err);
-		res.status(400).send({message: err});
+		res.status(err.status).send(err.message)
+	});
+});
+
+app.get('/devices', (req, res) => {
+	console.log('Loading devices list');
+	dh.getDevices().then(devices => {
+		res.status(200).send(devices);
+	}).catch((err) => {
+		res.status(err.status).send(err.message)
+	});
+});
+
+app.post('/devices', (req, res) => {
+	let device = req.body;
+	console.log('Adding', device, 'to devices list');
+	dh.addDevice(device).then((response) => {
+		console.log('Got response from addDevice');
+		console.log(response);
+		res.status(response.status).send(response.data);
+	}).catch((err) => {
+		console.log('Got error from addTemplate');
+		let response = err.response;
+		res.status(response.status).send(response.data);
 	});
 });
 
