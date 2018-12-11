@@ -1,9 +1,21 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Toolbar from './Toolbar';
+import Workspace from './Workspace';
 
 class App extends Component {
-  render() {
+
+	render() {
+		return (
+			<div>
+				<Toolbar/>
+				<Workspace/>
+			</div>
+		);
+	}
+
+  rendeer() {
     return (
       <div className="App">
         <header className="App-header">
