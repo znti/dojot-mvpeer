@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
-const configs = require('./configs');
+const configs = require('./src/configs');
 
 const DojotHelper = require('./src/helpers/DojotHelper.js');
 

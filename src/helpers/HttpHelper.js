@@ -6,12 +6,12 @@ module.exports = class HttpHelper {
 		console.log('Ping from HttpHelper');
 	}
 
-	constructor(dojotConfigs) {
-		this.configs = dojotConfigs;
-		
-		console.log('Initializing http helper with configs', this.configs);
+	constructor(endpointUri) {
+//		this.configs = dojotConfigs;
+		this.endpoint = endpointUri;
+		console.log('Initializing http helper pointing to', this.endpoint);
 		this.http = axios.create({
-			baseURL: this.configs.server,
+			baseURL: this.endpoint,
 		});
 
 	}
@@ -20,7 +20,7 @@ module.exports = class HttpHelper {
 		return new Promise((resolve, reject) => {
 		console.log('Setting auth token as', jwt);
 			this.http = axios.create({
-				baseURL: this.configs.server,
+				baseURL: this.endpoint,
 				timeout: 5000,
 				headers: {
 					'Authorization': `Bearer ${jwt}`,

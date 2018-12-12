@@ -1,13 +1,25 @@
 import mockData from './mock/data';
+import configs from './configs'
+
+const HttpHelper = require('./helpers/HttpHelper');
 
 export default class DojotClient {
 
 	constructor() {
 		this.devices = mockData.devices;
 		this.templates = mockData.templates;
+		let serverEndpoint = `${configs.server.host}:${configs.server.port}`;
+		console.log('Loading httpClient pointing to', serverEndpoint);
+		this.httpClient = new HttpHelper(serverEndpoint);
 	}
 
 	getDevices = (tenant) => {
+		console.log('DojotClient loading devices for', tenant);
+		let endpoint = `/api/${tenant}/devices`
+		return this.httpClient.get(endpoint);
+	}
+
+	oGetDevices = (tenant) => {
 		return new Promise((res, rej) => {
 			console.log('DojotClient loading devices for', tenant);
 			res(this.devices);

@@ -12,9 +12,15 @@ module.exports = class DojotHelper {
 
 		this.clientsMap = [];
 
+
+
 		this.configs = dojotConfigs;
 		console.log('Building a helper with configs', this.configs);
-		//this.httpClient = new HttpHelper(this.configs);
+
+		this.resources = dojotConfigs.resources;
+		console.log('Set resources as', this.resources);
+
+		let dojotEndpoint = `${dojotConfigs.host}:${dojotConfigs.port}`
 
 		this.tenants.map(tenant => {
 
@@ -29,8 +35,8 @@ module.exports = class DojotHelper {
 			let credentials = {username, passwd};
 
 			console.log('Retrieving access token for tenant', tenant);
-			let httpClient = new HttpHelper(this.configs);
-			httpClient.post(this.configs.auth, credentials).then(response => {
+			let httpClient = new HttpHelper(dojotEndpoint);
+			httpClient.post(this.resources.auth, credentials).then(response => {
 				let jwt = response.data.jwt;
 				console.log('Setting client token', jwt, 'on tenant', tenant);
 				httpClient.setAuthToken(jwt).then(() => {
@@ -69,27 +75,27 @@ module.exports = class DojotHelper {
 
 		return this.loadTenantClient(tenant).then(client => {
 			console.log('Got client', client);
-			return client.get(endpoint)
+			return client.get(this.resources.devices)
 		});
 	}
 
 	addDevice(tenant, deviceData) {
 		return this.loadTenantClient(tenant).then(client => {
-			return client.post(this.configs.devices, deviceData);
+			return client.post(this.resources.devices, deviceData);
 		});
 	}
 
 	getTemplates(tenant) {
 		console.log('Loading templates');
 		return this.loadTenantClient(tenant).then(client => {
-			return client.get(this.configs.templates)
+			return client.get(this.resources.templates)
 		});
 	}
 
 	addTemplate(tenant, templateData) {
 		console.log('Adding template', templateData);
 		return this.loadTenantClient(tenant).then(client => {
-			return client.post(this.configs.templates, templateData)
+			return client.post(this.resources.templates, templateData)
 		});
 	}
 
