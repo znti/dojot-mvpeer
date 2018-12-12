@@ -16,19 +16,22 @@ module.exports = class HttpHelper {
 
 	}
 
-	setAuthToken(jwt, cb) {
+	setAuthToken(jwt) {
+		return new Promise((resolve, reject) => {
 		console.log('Setting auth token as', jwt);
-		this.http = axios.create({
-			baseURL: this.configs.server,
-			timeout: 5000,
-			headers: {
-				'Authorization': `Bearer ${jwt}`,
-				'Content-Type': 'application/json',
-			}
+			this.http = axios.create({
+				baseURL: this.configs.server,
+				timeout: 5000,
+				headers: {
+					'Authorization': `Bearer ${jwt}`,
+					'Content-Type': 'application/json',
+				}
+			});
+
+			resolve();
 		});
-		cb && cb();
 	}
-	
+
 	get(endpoint) {
 		console.log('Requesting GET', endpoint);
 		return this.http.get(endpoint);

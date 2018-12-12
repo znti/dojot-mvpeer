@@ -10,9 +10,7 @@ const DojotHelper = require('./src/helpers/DojotHelper.js');
 let serverPort = configs.server.port;
 let baseAppDir = path.join(__dirname, 'build');
 
-console.log('helper', DojotHelper)
 let dh = new DojotHelper(configs.dojot);
-dh.ping();
 
 /*
  * Web app helper endpoints
@@ -23,22 +21,23 @@ function handleApiCall(exec, res, data) {
 		console.log('Got response');
 		res.status(response.status).send(response.data);
 	}).catch((error) => {
-		console.log('Error while executing');
+		console.log('Error while executing', error);
 		let response = error.response;
 		res.status(response.status).send(response.data);
 	});
 }
 
-app.get('/api/*', (req, res) => {
-	let resource = req. params[0];
-	console.log('Loading', resource);
+app.get('/api/:tenant/*', (req, res) => {
+	let tenantName = req.params.tenant
+	let resource = req.params[0];
+	console.log('Loading', resource, 'for tenant', tenantName);
 	
 	switch(resource) {
 		case 'templates':
-			handleApiCall(() => { return dh.getTemplates() }, res);
+			handleApiCall(() => { return dh.getTemplates(tenantName) }, res);
 			break;
 		case 'devices':
-			handleApiCall(() => { return dh.getDevices() }, res);
+			handleApiCall(() => { return dh.getDevices(tenantName) }, res);
 			break;
 		default:
 			console.log('Beep! 404..');
@@ -47,17 +46,17 @@ app.get('/api/*', (req, res) => {
 
 });
 
-app.post('/api/*', (req, res) => {
+app.post('/api/:tenant/*', (req, res) => {
 	let resource = req. params[0];
 	let data = req.body;
 	console.log('Posting', data, 'on', resource);
 	
 	switch(resource) {
 		case 'templates':
-			handleApiCall(() => { return dh.addTemplate(data) }, res);
+			handleApiCall(() => { return dh.addTemplate(tenantName, data) }, res);
 			break;
 		case 'devices':
-			handleApiCall(() => { return dh.addDevice(data) }, res);
+			handleApiCall(() => { return dh.addDevice(tenantName, data) }, res);
 			break;
 		default:
 			console.log('Beep! 404..');
