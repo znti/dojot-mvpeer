@@ -54,6 +54,7 @@ app.get('/api/:tenant/*', (req, res) => {
 });
 
 app.post('/api/:tenant/*', (req, res) => {
+	let tenantName = req.params.tenant
 	let resource = req. params[0];
 	let data = req.body;
 	console.log('Posting', data, 'on', resource);

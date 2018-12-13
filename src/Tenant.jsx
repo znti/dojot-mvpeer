@@ -9,6 +9,7 @@ export default class Tenant extends Component {
 		this.state = {
 			...props,
 			devices: [],
+			templates: [],
 
 		}
 	}
@@ -18,6 +19,16 @@ export default class Tenant extends Component {
 		console.log('Current tenant state', this.state);
 		let dojotClient = this.state.data.dojotClient;
 		let tenantName = this.state.data.tenantName;
+		dojotClient.getTemplates(tenantName).then(response => {
+			console.log('Got response', response, 'for tenant', tenantName);
+			let templates = response.data.templates;
+			let selectedTemplate = templates ? templates[0].id : -1
+			this.setState({templates, selectedTemplate });
+		}).catch(error => {
+			console.log('Failed to load templates for', tenantName, ':', error);
+			this.setState({templates : []});
+		});
+
 		dojotClient.getDevices(tenantName).then(response => {
 			console.log('Got response', response, 'for tenant', tenantName);
 			let devices = response.data.devices;
@@ -28,11 +39,48 @@ export default class Tenant extends Component {
 		});
 	}
 
+
+	addDevice = () => {
+		let {tenantName} = this.state.data;
+		let {selectedTemplate, newDeviceName} = this.state;
+		
+		let deviceData = {
+			"templates": [
+				"" + selectedTemplate,
+			],
+			"label": newDeviceName,
+		};
+
+		console.log('Adding device', deviceData, 'on tenant', tenantName);
+		this.state.data.dojotClient.addDevice(tenantName, deviceData).then(response => {
+			let device = response.data.devices[0];
+			console.log('Device', device, 'created');
+			this.setState({devices: [...this.state.devices, device]});
+		});
+	}
+
+	handleChange = (event, fieldName) => {
+		let newData = event.target.value;
+		console.log('Updating', fieldName, 'to', newData);
+		this.setState({[fieldName]: newData});
+	};
+
 	render() {
 		return (
 			<div>
 				<h1>Tenant</h1>
 				<h2>{`${this.state.data.tenantName}`}</h2>
+				<div>
+					<select onChange={(e) => { this.handleChange(e, 'selectedTemplate'); }}>
+						{this.state.templates.map(template => {
+							return (
+								<option value={template.id}>{template.label}</option>
+							);
+						})}
+					</select>
+					<input type="text" onChange={(e) => this.handleChange(e, 'newDeviceName')}/>
+					<input type="button" onClick={this.addDevice} value="+ Device"/>
+				</div>
 				
 				{this.state.devices.map((device) => {
 					return <Device data={device}/>

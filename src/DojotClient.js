@@ -15,22 +15,20 @@ export default class DojotClient {
 
 	getDevices = (tenant) => {
 		console.log('DojotClient loading devices for', tenant);
-		let endpoint = `/api/${tenant}/devices`
+		let endpoint = `/api/${tenant}/devices`;
 		return this.httpClient.get(endpoint);
 	}
 
-	oGetDevices = (tenant) => {
-		return new Promise((res, rej) => {
-			console.log('DojotClient loading devices for', tenant);
-			res(this.devices);
-		});
+	addDevice = (tenant, deviceData) => {
+		console.log('DojotClient adding new device for tenant', tenant);
+		let endpoint = `/api/${tenant}/devices`;
+		return this.httpClient.post(endpoint, deviceData);
 	}
 
-	addDevice = (tenant, deviceData) => {
-		return new Promise((resolve, reject) => {
-			console.log('DojotClient adding new device for tenant', tenant);
-			resolve(this.devices);
-		});
+	getTemplates = (tenant) => {
+		console.log('DojotClient loading templates for', tenant);
+		let endpoint = `/api/${tenant}/templates`;
+		return this.httpClient.get(endpoint);
 	}
 
 }
