@@ -8,8 +8,8 @@ export default class Workspace extends Component {
 		super(props);
 		this.state = {
 			tenants: [
-				{tenantName: 'admin'},
-				{tenantName: 'test'},
+				{tenantName: 'admin', id: '0'},
+				{tenantName: 'test', id: '1'},
 			],
 		}
 	}
@@ -18,23 +18,18 @@ export default class Workspace extends Component {
 	componentWillMount() {
 		let dojotClient = new DojotClient();
 		this.setState({dojotClient});
-		dojotClient.getDevices().then(devices => {
-			console.log('Got', devices);
-			this.setState({devices});
-		});
 	}
 
 	render() {
 		return (
 			<div>
 				<h1>Workspace</h1>
-				
 				{this.state.tenants.map((tenant) => {
 					let data = {
 						tenantName: tenant.tenantName,
 						dojotClient: this.state.dojotClient
 					}
-					return <Tenant data={data}/>
+					return <Tenant key={tenant.id} data={data}/>
 				})}
 
 				<h1>/Workspace</h1>

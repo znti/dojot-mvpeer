@@ -1,7 +1,7 @@
 import mockData from './mock/data';
 import configs from './configs'
 
-const HttpHelper = require('./helpers/HttpHelper');
+import HttpHelper from './helpers/HttpHelperES6';
 
 export default class DojotClient {
 

@@ -18,9 +18,13 @@ export default class Tenant extends Component {
 		console.log('Current tenant state', this.state);
 		let dojotClient = this.state.data.dojotClient;
 		let tenantName = this.state.data.tenantName;
-		dojotClient.getDevices(tenantName).then(devices => {
-			console.log('Got', devices, 'for tenant', tenantName);
+		dojotClient.getDevices(tenantName).then(response => {
+			console.log('Got response', response, 'for tenant', tenantName);
+			let devices = response.data.devices;
 			this.setState({devices});
+		}).catch(error => {
+			console.log('Failed to load devices for', tenantName, ':', error);
+			this.setState({devices : []});
 		});
 	}
 
