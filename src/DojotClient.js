@@ -25,6 +25,10 @@ export default class DojotClient {
 		return this.httpClient.post(endpoint, deviceData);
 	}
 
+	sendDeviceMessage = (tenant, deviceId, message) => {
+		console.log(`Sending ${JSON.stringify(message)} to /${tenant}/${deviceId}`);
+	}
+
 	getTemplates = (tenant) => {
 		console.log('DojotClient loading templates for', tenant);
 		let endpoint = `/api/${tenant}/templates`;

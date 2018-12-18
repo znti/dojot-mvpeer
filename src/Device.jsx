@@ -4,12 +4,17 @@ export default class Device extends Component {
 
 	constructor(props) {
 		super(props);
+
+		let dojotClient = props.client;
+		console.log('Got client', dojotClient);
+
 		let deviceId = props.data.id;
 		let message = {message: `hi from ${deviceId}`};
 
 		this.state = {
 			deviceId,
 			message,
+			dojotClient,
 		}
 	}
 
@@ -21,7 +26,8 @@ export default class Device extends Component {
 
 	handleSend = (e) => {
 		let {deviceId, message} = this.state;
-		console.log(`Sending ${JSON.stringify(message)} from ${deviceId}`);
+//		console.log(`Sending ${JSON.stringify(message)} from ${deviceId}`);
+		this.state.dojotClient.sendDeviceMessage('omgadmin', deviceId, message);
 		
 	}
 

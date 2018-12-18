@@ -83,7 +83,10 @@ export default class Tenant extends Component {
 				</div>
 				
 				{this.state.devices.map((device) => {
-					return <Device data={device}/>
+					return <Device 
+							data={device}
+							client={this.state.data.dojotClient}
+							/>
 				})}
 
 				<h1>/Tenant</h1>
