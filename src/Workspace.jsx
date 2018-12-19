@@ -29,7 +29,13 @@ export default class Workspace extends Component {
 						tenantName: tenant.tenantName,
 						dojotClient: this.state.dojotClient
 					}
-					return <Tenant key={tenant.id} data={data}/>
+
+
+					return <Tenant 
+							key={tenant.id} 
+							tenantName={tenant.tenantName}
+							dojotClient={this.state.dojotClient}
+							/>
 				})}
 
 				<h1>/Workspace</h1>
