@@ -56,7 +56,7 @@ module.exports = class DojotHelper {
 
 	}
 
-	loadTenantClient(tenant, next) {
+	loadTenantClient(tenant) {
 		return new Promise( (resolve, reject) => {
 			console.log('Loading tenant', tenant, '\'s client from', this.clientsMap);
 			let tenantData = this.clientsMap.find(client => {
@@ -68,7 +68,6 @@ module.exports = class DojotHelper {
 			if(tenantData) {
 				console.log('Got candidate', tenantData);
 				resolve(tenantData.client);
-				next && next(tenantData.client)
 			} else {
 				console.log('No client found');
 				reject({response: {status:404, data:{message: 'Tenant not found'} } });

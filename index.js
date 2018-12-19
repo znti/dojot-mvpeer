@@ -22,8 +22,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-
-function handleApiCall(exec, res, data) {
+function handleApiCall(exec, res) {
 	exec().then((response) => {
 		console.log('Got response');
 		res.status(response.status).send(response.data);

@@ -5,9 +5,8 @@ export default class Device extends Component {
 	constructor(props) {
 		super(props);
 
-		let {onDeviceMessage} = props;
+		let {onDeviceMessage, deviceId} = props;
 
-		let deviceId = props.data.id;
 		let message = {message: `hi from ${deviceId}`};
 
 		this.state = {

@@ -99,7 +99,7 @@ export default class Tenant extends Component {
 					return (
 						<Device 
 							key={device.id}
-							data={device}
+							deviceId={device.id}
 							onDeviceMessage={this.handleDeviceMessage}
 							/>
 					);

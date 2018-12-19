@@ -29,12 +29,6 @@ export default class Workspace extends Component {
 			<div>
 				<h1>Workspace</h1>
 				{this.state.tenants.map((tenant) => {
-//					let data = {
-//						tenantName: tenant.tenantName,
-//						dojotClient: this.state.dojotClient
-//					}
-
-
 					return <Tenant 
 							key={tenant.id} 
 							tenantName={tenant.name}
