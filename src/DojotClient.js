@@ -15,13 +15,13 @@ export default class DojotClient {
 
 	getDevices = (tenant) => {
 		console.log('DojotClient loading devices for', tenant);
-		let endpoint = `/api/${tenant}/devices`;
+		let endpoint = `/api/tenants/${tenant}/devices`;
 		return this.httpClient.get(endpoint);
 	}
 
 	addDevice = (tenant, deviceData) => {
 		console.log('DojotClient adding new device for tenant', tenant);
-		let endpoint = `/api/${tenant}/devices`;
+		let endpoint = `/api/tenants/${tenant}/devices`;
 		return this.httpClient.post(endpoint, deviceData);
 	}
 
@@ -31,13 +31,12 @@ export default class DojotClient {
 
 	getTemplates = (tenant) => {
 		console.log('DojotClient loading templates for', tenant);
-		let endpoint = `/api/${tenant}/templates`;
+		let endpoint = `/api/tenants/${tenant}/templates`;
 		return this.httpClient.get(endpoint);
 	}
 
-	getTenants = (tenant) => {
-		tenant = 'admin'
-		let endpoint = `/api/${tenant}/tenants`;
+	getTenants = () => {
+		let endpoint = `/api/tenants`;
 		console.log('Requesting', endpoint);
 		return this.httpClient.get(endpoint);
 	}

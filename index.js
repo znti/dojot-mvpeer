@@ -33,11 +33,18 @@ function handleApiCall(exec, res) {
 	});
 }
 
-app.get('/api/:tenant/*', (req, res) => {
-	let tenantName = req.params.tenant
-	let resource = req.params[0];
-	console.log('Loading', resource, 'for tenant', tenantName);
-	
+/*
+ * Tenant management endpoint
+ */
+
+app.get('/api/tenants', (req, res) => {
+	handleApiCall(() => { return dh.getTenants() }, res);
+});
+
+app.get('/api/tenants/:tenantName/:resource', (req, res) => {
+	let {tenantName, resource} = req.params;
+
+	console.log('Loading resource', resource, 'for tenant', tenantName);
 	switch(resource) {
 		case 'templates':
 			handleApiCall(() => { return dh.getTemplates(tenantName) }, res);
@@ -45,22 +52,18 @@ app.get('/api/:tenant/*', (req, res) => {
 		case 'devices':
 			handleApiCall(() => { return dh.getDevices(tenantName) }, res);
 			break;
-		case 'tenants':
-			handleApiCall(() => { return dh.getTenants() }, res);
-			break;
 		default:
 			console.log('Beep! 404..');
 			res.status(404).send();
 	}
-
 });
 
-app.post('/api/:tenant/*', (req, res) => {
-	let tenantName = req.params.tenant
-	let resource = req. params[0];
+
+app.post('/api/tenants/:tenantName/:resource', (req, res) => {
+	let {tenantName, resource} = req.params;
 	let data = req.body;
-	console.log('Posting', data, 'on', resource);
-	
+
+	console.log('Posting', data, 'on resource', resource, 'for tenant', tenantName);
 	switch(resource) {
 		case 'templates':
 			handleApiCall(() => { return dh.addTemplate(tenantName, data) }, res);
@@ -72,7 +75,6 @@ app.post('/api/:tenant/*', (req, res) => {
 			console.log('Beep! 404..');
 			res.status(404).send();
 	}
-
 });
 
 /*
