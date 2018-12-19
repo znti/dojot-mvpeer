@@ -10,7 +10,7 @@ const DojotHelper = require('./src/helpers/DojotHelper.js');
 let serverPort = configs.server.port;
 let baseAppDir = path.join(__dirname, 'build');
 
-let dh = new DojotHelper(configs.dojot);
+let dh = new DojotHelper(configs);
 
 /*
  * Web app helper endpoints
@@ -38,7 +38,11 @@ function handleApiCall(exec, res) {
  */
 
 app.get('/api/tenants', (req, res) => {
-	handleApiCall(() => { return dh.getTenants() }, res);
+	console.log('Loading tenants');
+	dh.getTenants().then(tenants => {
+		console.log('OK');
+		res.status(200).send({tenants});
+	});
 });
 
 app.get('/api/tenants/:tenantName/:resource', (req, res) => {

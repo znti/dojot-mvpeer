@@ -2,11 +2,9 @@ const HttpHelper = require('./HttpHelper');
 
 module.exports = class DojotHelper {
 
-	constructor(dojotConfigs) {
-		this.tenants = [ 
-			{id: '0', name: 'admin'},
-			{id: '1', name: 'test'},
-		];
+	constructor(configss) {
+
+		let dojotConfigs = configss.dojot;
 
 		this.clientsMap = [];
 
@@ -18,7 +16,18 @@ module.exports = class DojotHelper {
 
 		let dojotEndpoint = `${dojotConfigs.host}:${dojotConfigs.port}`
 
-		this.tenants.map(tenant => {
+		let iotAgentEndpoint = `${configss.iotAgent.host}:${configss.iotAgent.port}`
+		console.log('Building iotAgent helper from', iotAgentEndpoint);
+		this.iotAgentClient = new HttpHelper(iotAgentEndpoint);
+
+
+		this.getTenants().then(tenants => {
+
+//			let tenants = response.data.tenants;
+			console.log('Retrieved tenants', tenants);
+
+
+			tenants.map(tenant => {
 
 			let tenantName = tenant.name;
 			let tenantId = tenant.id;
@@ -28,7 +37,7 @@ module.exports = class DojotHelper {
 
 			// TODO: Change to ids check once they are set, since name can vary
 			if(tenantName !== 'admin') {
-				username = `${tenantName}Admin`;
+				username = `${tenantName}_admin`;
 				passwd = 'temppwd';
 			}
 
@@ -53,6 +62,7 @@ module.exports = class DojotHelper {
 			});
 
 		});
+	});
 
 	}
 
@@ -104,14 +114,15 @@ module.exports = class DojotHelper {
 		});
 	}
 
-	getTenants(tenant) {
-			// TODO: get from dojot
-			return Promise.resolve({
-				status:200,
-				data: {
-					tenants: this.tenants,
-				}
-			});
+	getTenants() {
+		let endpoint = '/tenants';
+		return this.iotAgentClient.get(endpoint).then(response => {
+			let tenants = response.data.tenants;	
+			let genId = 1;
+			tenants = tenants.map(t => t === 'admin' ? {id:0, name:t} : {id:genId++, name:t} );
+			console.log('Transformed to', tenants);
+			return Promise.resolve(tenants);
+		});
 	}
 
 }

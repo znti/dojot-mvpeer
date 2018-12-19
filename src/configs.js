@@ -17,8 +17,9 @@ module.exports = {
 		}
 	},
 
-	client: {
-		
+	iotAgent: {
+		host: 'http://localhost',
+		port: 8083,
 	},
 
 }
