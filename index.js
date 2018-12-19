@@ -46,6 +46,9 @@ app.get('/api/:tenant/*', (req, res) => {
 		case 'devices':
 			handleApiCall(() => { return dh.getDevices(tenantName) }, res);
 			break;
+		case 'tenants':
+			handleApiCall(() => { return dh.getTenants() }, res);
+			break;
 		default:
 			console.log('Beep! 404..');
 			res.status(404).send();

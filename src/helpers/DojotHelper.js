@@ -2,17 +2,13 @@ const HttpHelper = require('./HttpHelper');
 
 module.exports = class DojotHelper {
 
-
-
 	constructor(dojotConfigs) {
 		this.tenants = [ 
-			'admin',
-			'test',
+			{id: '0', name: 'admin'},
+			{id: '1', name: 'test'},
 		];
 
 		this.clientsMap = [];
-
-
 
 		this.configs = dojotConfigs;
 		console.log('Building a helper with configs', this.configs);
@@ -24,25 +20,29 @@ module.exports = class DojotHelper {
 
 		this.tenants.map(tenant => {
 
+			let tenantName = tenant.name;
+			let tenantId = tenant.id;
+
 			let username = 'admin';
 			let passwd = 'admin';
 
-			if(tenant !== 'admin') {
-				username = `${tenant}Admin`;
+			// TODO: Change to ids check once they are set, since name can vary
+			if(tenantName !== 'admin') {
+				username = `${tenantName}Admin`;
 				passwd = 'temppwd';
 			}
 
 			let credentials = {username, passwd};
 
-			console.log('Retrieving access token for tenant', tenant);
+			console.log('Retrieving access token for tenant', tenantName);
 			let httpClient = new HttpHelper(dojotEndpoint);
 			httpClient.post(this.resources.auth, credentials).then(response => {
 				let jwt = response.data.jwt;
-				console.log('Setting client token', jwt, 'on tenant', tenant);
+				console.log('Setting client token', jwt, 'on tenant', tenantName);
 				httpClient.setAuthToken(jwt).then(() => {
-					console.log('Tenant', tenant, 'token set.');
+					console.log('Tenant', tenantName, 'client set.');
 					this.clientsMap.push({
-						tenant,
+						tenantName,
 						client: httpClient,
 					});
 				}).catch(error => {
@@ -59,12 +59,18 @@ module.exports = class DojotHelper {
 	loadTenantClient(tenant, next) {
 		return new Promise( (resolve, reject) => {
 			console.log('Loading tenant', tenant, '\'s client from', this.clientsMap);
-			let tenantData = this.clientsMap.find(c => c.tenant === tenant);
-			console.log('Got candidate', tenantData);
+			let tenantData = this.clientsMap.find(client => {
+				let clientsTenant = client.tenantName;
+				let requestedTenant = tenant;
+				console.log('Comparing', clientsTenant, 'against requested tenant', requestedTenant);
+				return clientsTenant === requestedTenant;
+			});
 			if(tenantData) {
+				console.log('Got candidate', tenantData);
 				resolve(tenantData.client);
 				next && next(tenantData.client)
 			} else {
+				console.log('No client found');
 				reject({response: {status:404, data:{message: 'Tenant not found'} } });
 			}
 		});
@@ -97,6 +103,16 @@ module.exports = class DojotHelper {
 		return this.loadTenantClient(tenant).then(client => {
 			return client.post(this.resources.templates, templateData)
 		});
+	}
+
+	getTenants(tenant) {
+			// TODO: get from dojot
+			return Promise.resolve({
+				status:200,
+				data: {
+					tenants: this.tenants,
+				}
+			});
 	}
 
 }

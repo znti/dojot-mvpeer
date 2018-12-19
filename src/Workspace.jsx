@@ -7,10 +7,7 @@ export default class Workspace extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			tenants: [
-				{tenantName: 'admin', id: '0'},
-				{tenantName: 'test', id: '1'},
-			],
+			tenants: [],
 		}
 	}
 
@@ -18,6 +15,13 @@ export default class Workspace extends Component {
 	componentWillMount() {
 		let dojotClient = new DojotClient();
 		this.setState({dojotClient});
+
+		console.log('Retrieving tenants data');
+		dojotClient.getTenants().then(response => {
+			let {tenants} = response.data;
+			console.log('Loaded tenants:', tenants);
+			this.setState({tenants});
+		});
 	}
 
 	render() {
@@ -25,15 +29,15 @@ export default class Workspace extends Component {
 			<div>
 				<h1>Workspace</h1>
 				{this.state.tenants.map((tenant) => {
-					let data = {
-						tenantName: tenant.tenantName,
-						dojotClient: this.state.dojotClient
-					}
+//					let data = {
+//						tenantName: tenant.tenantName,
+//						dojotClient: this.state.dojotClient
+//					}
 
 
 					return <Tenant 
 							key={tenant.id} 
-							tenantName={tenant.tenantName}
+							tenantName={tenant.name}
 							dojotClient={this.state.dojotClient}
 							/>
 				})}

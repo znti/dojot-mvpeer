@@ -35,4 +35,11 @@ export default class DojotClient {
 		return this.httpClient.get(endpoint);
 	}
 
+	getTenants = (tenant) => {
+		tenant = 'admin'
+		let endpoint = `/api/${tenant}/tenants`;
+		console.log('Requesting', endpoint);
+		return this.httpClient.get(endpoint);
+	}
+
 }
