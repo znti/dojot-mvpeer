@@ -6,8 +6,12 @@ import DojotClient from './DojotClient';
 export default class Tenant extends Component {
 	constructor(props) {
 		super(props);
+
+		let {tenantName, dojotClient} = props;
+
 		this.state = {
-			...props,
+			tenantName,
+			dojotClient,
 			devices: [],
 			templates: [],
 
@@ -17,8 +21,7 @@ export default class Tenant extends Component {
 
 	componentDidMount() {
 		console.log('Current tenant state', this.state);
-		let dojotClient = this.state.data.dojotClient;
-		let tenantName = this.state.data.tenantName;
+		let {tenantName, dojotClient} = this.state;
 		dojotClient.getTemplates(tenantName).then(response => {
 			console.log('Got response', response, 'for tenant', tenantName);
 			let templates = response.data.templates;
@@ -41,8 +44,7 @@ export default class Tenant extends Component {
 
 
 	addDevice = () => {
-		let {tenantName} = this.state.data;
-		let {selectedTemplate, newDeviceName} = this.state;
+		let {tenantName, selectedTemplate, newDeviceName} = this.state;
 		
 		let deviceData = {
 			"templates": [
@@ -52,7 +54,7 @@ export default class Tenant extends Component {
 		};
 
 		console.log('Adding device', deviceData, 'on tenant', tenantName);
-		this.state.data.dojotClient.addDevice(tenantName, deviceData).then(response => {
+		this.state.dojotClient.addDevice(tenantName, deviceData).then(response => {
 			let device = response.data.devices[0];
 			console.log('Device', device, 'created');
 			this.setState({devices: [...this.state.devices, device]});
@@ -66,20 +68,26 @@ export default class Tenant extends Component {
 	};
 
 	handleDeviceMessage = (deviceId, message) => {
-		let tenantId = this.state.data.tenantName;
-		this.state.data.dojotClient.sendDeviceMessage(tenantId, deviceId, message);
+		let tenantId = this.state.tenantName;
+		this.state.dojotClient.sendDeviceMessage(tenantId, deviceId, message);
 	}
 
 	render() {
 		return (
 			<div>
 				<h1>Tenant</h1>
-				<h2>{`${this.state.data.tenantName}`}</h2>
+				<h2>{`${this.state.tenantName}`}</h2>
 				<div>
 					<select onChange={(e) => { this.handleChange(e, 'selectedTemplate'); }}>
 						{this.state.templates.map(template => {
 							return (
-								<option value={template.id}>{template.label}</option>
+								<option 
+									key={template.id}
+									value={template.id}
+									>
+									{template.label}
+								</option>
+
 							);
 						})}
 					</select>
@@ -88,10 +96,13 @@ export default class Tenant extends Component {
 				</div>
 				
 				{this.state.devices.map((device) => {
-					return <Device 
+					return (
+						<Device 
+							key={device.id}
 							data={device}
 							onDeviceMessage={this.handleDeviceMessage}
 							/>
+					);
 				})}
 
 				<h1>/Tenant</h1>
