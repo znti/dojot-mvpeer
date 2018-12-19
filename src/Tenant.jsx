@@ -65,6 +65,11 @@ export default class Tenant extends Component {
 		this.setState({[fieldName]: newData});
 	};
 
+	handleDeviceMessage = (deviceId, message) => {
+		let tenantId = this.state.data.tenantName;
+		this.state.data.dojotClient.sendDeviceMessage(tenantId, deviceId, message);
+	}
+
 	render() {
 		return (
 			<div>
@@ -85,7 +90,7 @@ export default class Tenant extends Component {
 				{this.state.devices.map((device) => {
 					return <Device 
 							data={device}
-							client={this.state.data.dojotClient}
+							onDeviceMessage={this.handleDeviceMessage}
 							/>
 				})}
 
