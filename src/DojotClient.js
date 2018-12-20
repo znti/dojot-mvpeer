@@ -35,6 +35,12 @@ export default class DojotClient {
 		return this.httpClient.get(endpoint);
 	}
 
+	addTenant = (tenantData) => {
+		let endpoint = `/api/tenants`;
+		console.log('addTenant requesting', endpoint, 'with data', tenantData);
+		return this.httpClient.post(endpoint, tenantData);
+	}
+
 	getTenants = () => {
 		let endpoint = `/api/tenants`;
 		console.log('Requesting', endpoint);

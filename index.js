@@ -24,7 +24,7 @@ app.use(function(req, res, next) {
 
 function handleApiCall(exec, res) {
 	exec().then((response) => {
-		console.log('Got response');
+		console.log('Got a response');
 		res.status(response.status).send(response.data);
 	}).catch((error) => {
 		console.log('Error while executing', error);
@@ -44,6 +44,17 @@ app.get('/api/tenants', (req, res) => {
 		res.status(200).send({tenants});
 	});
 });
+
+app.post('/api/tenants', (req, res) => {
+	let tenantData = req.body;
+
+	handleApiCall(() => {return dh.addTenant(tenantData) }, res);
+
+	//dh.addTenant(tenantData).then(response => {
+	//	console.log('Got response', response);
+	//});
+});
+
 
 app.get('/api/tenants/:tenantName/:resource', (req, res) => {
 	let {tenantName, resource} = req.params;

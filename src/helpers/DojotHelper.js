@@ -90,7 +90,7 @@ module.exports = class DojotHelper {
 
 		return this.loadTenantClient(tenant).then(client => {
 			console.log('Got client', client);
-			return client.get(this.resources.devices)
+			return client.get(this.resources.devices);
 		});
 	}
 
@@ -103,14 +103,53 @@ module.exports = class DojotHelper {
 	getTemplates(tenant) {
 		console.log('Loading templates');
 		return this.loadTenantClient(tenant).then(client => {
-			return client.get(this.resources.templates)
+			return client.get(this.resources.templates);
 		});
 	}
 
 	addTemplate(tenant, templateData) {
 		console.log('Adding template', templateData);
 		return this.loadTenantClient(tenant).then(client => {
-			return client.post(this.resources.templates, templateData)
+			return client.post(this.resources.templates, templateData);
+		});
+	}
+
+	addTenant(tenantData) {
+		console.log('Adding tenant', tenantData);
+		let tenant = 'admin';
+		return this.loadTenantClient(tenant).then(client => {
+
+
+			let tenantName = tenantData.name;
+			let adminUsername = `${tenantName}_admin`;
+
+			let userData = {
+				username: adminUsername,
+				service: tenantName,
+				email: `${tenantName}@noemail.com`,
+				name: adminUsername,
+				profile: "admin"
+			}
+
+			console.log('Creating tenant from data', userData);
+
+			return client.post(this.resources.tenants, userData).then(response => {
+				console.log('Tenant created', response.data, response.status);	
+				return Promise.resolve({
+					status: response.status,
+					data: {
+						message: 'tenant created',
+						tenant: tenantName,
+						admin: {
+							username: adminUsername,
+							password: 'temppwd',
+						}
+					},
+				})
+			}).catch(err => {
+				console.log('Failed to create tenant');
+				return Promise.reject(err);
+			});
 		});
 	}
 
