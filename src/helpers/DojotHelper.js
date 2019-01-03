@@ -16,6 +16,8 @@ module.exports = class DojotHelper {
 
 		let dojotEndpoint = `${dojotConfigs.host}:${dojotConfigs.port}`
 
+		this.dojotEndpoint = dojotEndpoint;
+
 		let iotAgentEndpoint = `${configss.iotAgent.host}:${configss.iotAgent.port}`
 		console.log('Building iotAgent helper from', iotAgentEndpoint);
 		this.iotAgentClient = new HttpHelper(iotAgentEndpoint);
@@ -43,11 +45,17 @@ module.exports = class DojotHelper {
 
 			let credentials = {username, passwd};
 
+			this.setTenantClient(tenantName, credentials);
+		});
+	});
+
+	}
+
+	setTenantClient(tenantName, credentials) {
 			console.log('Retrieving access token for tenant', tenantName);
-			let httpClient = new HttpHelper(dojotEndpoint);
+			let httpClient = new HttpHelper(this.dojotEndpoint);
 			httpClient.post(this.resources.auth, credentials).then(response => {
 				let jwt = response.data.jwt;
-				console.log('Setting client token', jwt, 'on tenant', tenantName);
 				httpClient.setAuthToken(jwt).then(() => {
 					console.log('Tenant', tenantName, 'client set.');
 					this.clientsMap.push({
@@ -55,15 +63,14 @@ module.exports = class DojotHelper {
 						client: httpClient,
 					});
 				}).catch(error => {
-					console.log('Failed to set auth token on', tenant);
+					let message = error.response.data.message;
+					console.log('Failed to set auth token on', tenantName, message);
 				});
 			}).catch(error => {
-				console.log('Failed to authenticate for', tenant);
+				let message = error.response.data.message;
+				console.log('Failed to authenticate for', tenantName, ':', message);
 			});
-
-		});
-	});
-
+		
 	}
 
 	loadTenantClient(tenant) {
@@ -145,14 +152,23 @@ module.exports = class DojotHelper {
 
 			return client.post(this.resources.tenants, userData).then(response => {
 				console.log('Tenant created', response.data, response.status);	
+
+				let username = adminUsername;
+				let passwd = 'temppwd';
+
+				setTimeout(() => {
+					console.log('Adding a dojotClient for', tenantName);
+					this.setTenantClient(tenantName, {username, passwd});
+				}, 5000);
+
 				return Promise.resolve({
 					status: response.status,
 					data: {
 						message: 'tenant created',
 						tenant: tenantName,
 						admin: {
-							username: adminUsername,
-							password: 'temppwd',
+							username,
+							passwd,
 						}
 					},
 				})
