@@ -92,6 +92,25 @@ app.post('/api/tenants/:tenantName/:resource', (req, res) => {
 	}
 });
 
+app.post('/api/tenants/:tenantName/:resource/:resourceId', (req, res) => {
+	let {tenantName, resource, resourceId} = req.params;
+	let data = req.body;
+
+	console.log('Posting', data, 'on resource', resource + '/' + resourceId, 'for tenant', tenantName);
+	switch(resource) {
+		case 'templates':
+			handleApiCall(() => { return dh.addTemplate(tenantName, data) }, res);
+			break;
+		case 'devices':
+			handleApiCall(() => { return dh.sendDeviceMessage(tenantName, resourceId, data) }, res);
+			break;
+		default:
+			console.log('Beep! 404..');
+			res.status(404).send();
+	}
+});
+
+
 /*
  * Web pages server
  */

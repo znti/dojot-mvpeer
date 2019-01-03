@@ -100,6 +100,16 @@ module.exports = class DojotHelper {
 		});
 	}
 
+
+	sendDeviceMessage(tenant, deviceId, message) { 
+		console.log('Sending message', message, 'to device', deviceId, 'on tenant', tenant);
+		let endpoint = `/tenants/${tenant}/devices/${deviceId}/messages`;
+		return this.iotAgentClient.post(endpoint, message)
+			//.then(response => {
+			//return Promise.resolve(tenants);
+		//});
+	}
+
 	getTemplates(tenant) {
 		console.log('Loading templates');
 		return this.loadTenantClient(tenant).then(client => {

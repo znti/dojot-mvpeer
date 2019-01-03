@@ -70,7 +70,9 @@ export default class Tenant extends Component {
 
 	handleDeviceMessage = (deviceId, message) => {
 		let tenantId = this.state.tenantName;
-		this.state.dojotClient.sendDeviceMessage(tenantId, deviceId, message);
+		this.state.dojotClient.sendDeviceMessage(tenantId, deviceId, message).then(() => {
+			console.log('im back');
+		});
 	}
 
 	createSampleTemplate = () => {
