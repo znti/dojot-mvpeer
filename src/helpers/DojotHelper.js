@@ -32,12 +32,10 @@ module.exports = class DojotHelper {
 			tenants.map(tenant => {
 
 			let tenantName = tenant.name;
-			let tenantId = tenant.id;
 
 			let username = 'admin';
 			let passwd = 'admin';
 
-			// TODO: Change to ids check once they are set, since name can vary
 			if(tenantName !== 'admin') {
 				username = `${tenantName}_admin`;
 				passwd = 'temppwd';
@@ -183,10 +181,9 @@ module.exports = class DojotHelper {
 		let endpoint = '/tenants';
 		return this.iotAgentClient.get(endpoint).then(response => {
 			let tenants = response.data.tenants;	
-			let genId = 1;
-			tenants = tenants.map(t => t === 'admin' ? {id:0, name:t} : {id:genId++, name:t} );
-			console.log('Transformed to', tenants);
-			return Promise.resolve(tenants);
+			let newTenants = tenants.map(t => { return {name:t} });
+			console.log('Transformed', tenants, 'to', newTenants);
+			return Promise.resolve(newTenants);
 		});
 	}
 

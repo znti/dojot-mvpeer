@@ -24,10 +24,36 @@ export default class Workspace extends Component {
 		});
 	}
 
+	handleChange = (event, fieldName) => {
+		let newData = event.target.value;
+		console.log('Updating', fieldName, 'to', newData);
+		this.setState({[fieldName]: newData});
+	};
+
+	addTenant = (event) => {
+		let tenantName = this.state.newTenantName;
+
+		let tenantData = {
+			name: tenantName,
+		}
+
+		console.log('Adding tenant', tenantData);
+		this.state.dojotClient.addTenant(tenantData).then(response => {
+			console.log('Tenant', tenantName, 'added');
+			this.setState({tenants: [...this.state.tenants, tenantData]});
+		});
+	}
+
 	render() {
 		return (
 			<div>
 				<h1>Workspace</h1>
+
+				<div>
+					<input type="text" onChange={(e) => this.handleChange(e, 'newTenantName')}/>
+					<input type="button" onClick={this.addTenant} value="+ Tenant"/>
+				</div>
+
 				{this.state.tenants.map((tenant) => {
 					return <Tenant 
 							key={tenant.id} 

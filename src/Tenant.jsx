@@ -20,8 +20,8 @@ export default class Tenant extends Component {
 
 
 	componentDidMount() {
-		console.log('Current tenant state', this.state);
 		let {tenantName, dojotClient} = this.state;
+		console.log('Tenant', tenantName, 'just mounted');
 		dojotClient.getTemplates(tenantName).then(response => {
 			console.log('Loaded templates', response, 'for tenant', tenantName);
 			let templates = response.data.templates;
