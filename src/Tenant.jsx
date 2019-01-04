@@ -1,32 +1,24 @@
 import React, { Component } from 'react';
 import Device from './Device';
-import DojotClient from './DojotClient';
-
 
 export default class Tenant extends Component {
 	constructor(props) {
 		super(props);
-
-		let {tenantName, dojotClient} = props;
-
 		this.state = {
-			tenantName,
-			dojotClient,
 			devices: [],
 			templates: [],
-
+			selectedTemplateId: -1,
+			newDeviceName: '',
 		}
 	}
 
-
 	componentDidMount() {
-		let {tenantName, dojotClient} = this.state;
+		let {tenantName, dojotClient} = this.props;
 		console.log('Tenant', tenantName, 'just mounted');
 		dojotClient.getTemplates(tenantName).then(response => {
 			console.log('Loaded templates', response, 'for tenant', tenantName);
 			let templates = response.data.templates;
-			let selectedTemplateId = templates ? templates[0].id : -1
-			this.setState({templates, selectedTemplateId });
+			this.setState({templates});
 		}).catch(error => {
 			console.log('Failed to load templates for', tenantName, ':', error);
 			this.setState({templates : []});
@@ -43,9 +35,9 @@ export default class Tenant extends Component {
 		});
 	}
 
-
 	addDevice = () => {
-		let {tenantName, selectedTemplateId, newDeviceName} = this.state;
+		let {selectedTemplateId, newDeviceName} = this.state;
+		let {tenantName} = this.props;
 		
 		let deviceData = {
 			"templates": [
@@ -55,7 +47,7 @@ export default class Tenant extends Component {
 		};
 
 		console.log('Adding device', deviceData, 'on tenant', tenantName);
-		this.state.dojotClient.addDevice(tenantName, deviceData).then(response => {
+		this.props.dojotClient.addDevice(tenantName, deviceData).then(response => {
 			let device = response.data.devices[0];
 			console.log('Device', device, 'created');
 			this.setState({devices: [...this.state.devices, device]});
@@ -69,14 +61,14 @@ export default class Tenant extends Component {
 	};
 
 	handleDeviceMessage = (deviceId, message) => {
-		let tenantId = this.state.tenantName;
-		this.state.dojotClient.sendDeviceMessage(tenantId, deviceId, message).then(() => {
-			console.log('im back');
+		let tenantId = this.props.tenantName;
+		this.props.dojotClient.sendDeviceMessage(tenantId, deviceId, message).then(() => {
+			console.log('Message sent');
 		});
 	}
 
 	createSampleTemplate = () => {
-		let tenantId = this.state.tenantName;
+		let tenantId = this.props.tenantName;
 
 		let templateData = {
 			label: "stub",
@@ -90,7 +82,7 @@ export default class Tenant extends Component {
 		}
 
 		console.log('Creating stub template', templateData, 'for tenant', tenantId); 
-		this.state.dojotClient.addTemplate(tenantId, templateData). then(response => {
+		this.props.dojotClient.addTemplate(tenantId, templateData).then(response => {
 			let template = response.data.template;
 			console.log('Template', template, 'created');
 			this.setState({
@@ -106,20 +98,19 @@ export default class Tenant extends Component {
 		let {templates, devices} = this.state;
 		let hasStubTemplate = templates.find(x => x.label === "stub");
 		let hasTemplates = templates.length > 0;
+		let hasDevices = devices.length > 0;
 
-		let options = templates.map(template => {
-							return (
-								<option 
-									key={template.id}
-									value={template.id}
-									>
-									{template.label}
-								</option>
 
-							);
-						});
-		let templateSelector = (
-				
+
+		return (
+			<div>
+				<h1>Tenant</h1>
+				<h2>{`${this.props.tenantName}`}</h2>
+
+					{!hasStubTemplate && (<input type="button" value="+ Sample template" onClick={this.createSampleTemplate}/>)}
+
+					{hasTemplates && (
+			<div>
 					<select onChange={(e) => { this.handleChange(e, 'selectedTemplateId'); }}>
 						{templates.map(template => {
 							return (
@@ -134,10 +125,15 @@ export default class Tenant extends Component {
 						})};
 
 					</select>
-		);
+				<input type="text" onChange={(e) => this.handleChange(e, 'newDeviceName')}/>
+				<input type="button" onClick={this.addDevice} value="+ Device"/>
+			</div>
+					
+					)}
 
-
-		let devicesList = this.state.devices.map((device) => {
+					{hasDevices && (
+									<div>
+									{this.state.devices.map((device) => {
 					return (
 						<Device 
 							key={device.id}
@@ -145,34 +141,9 @@ export default class Tenant extends Component {
 							onDeviceMessage={this.handleDeviceMessage}
 							/>
 					);
-				});
-
-
-		let addStubTemplateDiv = (
-			<div>
-				<input type="button" value="+ Sample template" onClick={this.createSampleTemplate}/>
-			</div>
-		);
-
-		let templatesDiv = (
-			<div>
-				{templateSelector}				
-				<input type="text" onChange={(e) => this.handleChange(e, 'newDeviceName')}/>
-				<input type="button" onClick={this.addDevice} value="+ Device"/>
-			</div>
-		);
-		
-
-		return (
-			<div>
-				<h1>Tenant</h1>
-				<h2>{`${this.state.tenantName}`}</h2>
-
-					{!hasStubTemplate && addStubTemplateDiv}
-
-					{hasTemplates && templatesDiv}
-
-					{devicesList}
+				})};
+					</div>
+					)}
 
 				<h1>/Tenant</h1>
 			</div>

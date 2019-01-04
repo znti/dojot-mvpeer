@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
 import DojotClient from './DojotClient';
 import Toolbar from './Toolbar';
 import Workspace from './Workspace';

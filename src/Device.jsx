@@ -5,20 +5,11 @@ export default class Device extends Component {
 	constructor(props) {
 		super(props);
 
-		let {onDeviceMessage, deviceData} = props;
-
-		let deviceId = deviceData.id;
-		let deviceName = deviceData.label;
-
-		console.log('loaded device', deviceData);
-
-		let message = {message: `hi from ${deviceId}`};
+		let deviceId = props.deviceData.id
+		console.log('loaded device', props.deviceData);
 
 		this.state = {
-			deviceId,
-			deviceName,
-			message,
-			onDeviceMessage,
+			message: {message: `hi from ${deviceId}`},
 		}
 	}
 
@@ -36,18 +27,25 @@ export default class Device extends Component {
 	}
 
 	handleSend = (e) => {
-		let {deviceId, message} = this.state;
-//		console.log(`Sending ${JSON.stringify(message)} from ${deviceId}`);
-		this.state.onDeviceMessage(deviceId, message);
-		
+		let {message} = this.state;
+		let deviceId = this.props.deviceData.id;
+		this.props.onDeviceMessage(deviceId, message);
 	}
 
 	render() {
-		let {deviceId, deviceName, message} = this.state;
+
+		let {deviceData} = this.props;
+
+		let deviceId = deviceData.id;
+		let deviceName = deviceData.label;
+
+		console.log('rendering device', deviceId);
+
+		let {message} = this.state;
 
 		return (
 			<div>
-				<h2>{`Device ${deviceName} (${deviceId})`}</h2>
+				<h2>{`Device ${deviceName} (id ${deviceId})`}</h2>
 				<textarea
 					defaultValue={JSON.stringify(message)}
 					onChange={this.handleChange}
@@ -57,5 +55,4 @@ export default class Device extends Component {
 			</div>
 		);
 	}
-
 }
