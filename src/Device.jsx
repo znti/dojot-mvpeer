@@ -18,6 +18,13 @@ export default class Device extends Component {
 
 	handleChange = (e) => {
 		let message = e.target.value;
+		try {
+			message = JSON.parse(message);
+			console.log('Parsed message into', message);
+		} catch {
+			console.error('Could not parse message into a valid json');
+		}
+
 		console.log(`[${this.state.deviceId}] - message set as`, message);
 		this.setState({message});
 	}
@@ -31,7 +38,8 @@ export default class Device extends Component {
 
 	render() {
 		let deviceId = this.state.deviceId;
-		let defaultVal = this.state.message; //{message: `hi from ${deviceId}`};
+		let defaultVal = this.state.message;
+
 		return (
 			<div>
 				<h2>{`Device ${deviceId}`}</h2>
