@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import SimpleCard from './mui/SimpleCard';
 
 export default class Toolbar extends Component {
 
@@ -26,16 +27,12 @@ export default class Toolbar extends Component {
 	render() {
 		console.log('rendering Toolbar');
 		return (
-			<div>
-				<h1>Toolbar</h1>
+			<SimpleCard>
+				<h2>Add tenant</h2>
+				<input type="text" onChange={(e) => this.handleChange(e, 'newTenantName')}/>
+				<input type="button" onClick={this.addTenant} value="+ Tenant"/>
+			</SimpleCard>
 
-				<div>
-					<input type="text" onChange={(e) => this.handleChange(e, 'newTenantName')}/>
-					<input type="button" onClick={this.addTenant} value="+ Tenant"/>
-				</div>
-
-				<h1>/Toolbar</h1>
-			</div>
 		);
 	}
 }

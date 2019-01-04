@@ -45,7 +45,7 @@ export default class Device extends Component {
 
 		return (
 			<div>
-				<h2>{`Device ${deviceName} (id ${deviceId})`}</h2>
+				<p>{`Device ${deviceName} (id ${deviceId})`}</p>
 				<textarea
 					defaultValue={JSON.stringify(message)}
 					onChange={this.handleChange}

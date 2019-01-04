@@ -14,7 +14,6 @@ export default class Workspace extends Component {
 		console.log(this.props)
 		return (
 			<div>
-				<h1>Workspace</h1>
 
 				{this.props.tenants.map((tenant) => {
 					return <Tenant 
@@ -24,7 +23,6 @@ export default class Workspace extends Component {
 							/>
 				})}
 
-				<h1>/Workspace</h1>
 			</div>
 		);
 	}

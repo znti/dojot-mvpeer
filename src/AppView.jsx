@@ -3,8 +3,6 @@ import DojotClient from './DojotClient';
 import Toolbar from './Toolbar';
 import Workspace from './Workspace';
 
-import ClippedDrawer from './mui/ClippedDrawer'
-
 class App extends Component {
 
 	constructor(props) {
@@ -31,23 +29,7 @@ class App extends Component {
 		});
 	}
 
-
 	render() {
-		return (
-			<ClippedDrawer>
-				<Toolbar
-					dojotClient={this.state.dojotClient}
-					onTenantAdded={this.handleTenantAdded}
-					/>
-				<Workspace 
-					tenants={this.state.tenants} 
-					dojotClient={this.state.dojotClient}
-					/>
-			</ClippedDrawer>
-		)
-	}
-
-	rrender() {
 		console.log('rendering App');
 		return (
 			<div>

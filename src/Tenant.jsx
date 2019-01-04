@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Device from './Device';
 
+import SimpleCard from './mui/SimpleCard';
+
 export default class Tenant extends Component {
 	constructor(props) {
 		super(props);
@@ -18,7 +20,10 @@ export default class Tenant extends Component {
 		dojotClient.getTemplates(tenantName).then(response => {
 			console.log('Loaded templates', response, 'for tenant', tenantName);
 			let templates = response.data.templates;
-			this.setState({templates});
+			this.setState({
+				templates,
+				selectedTemplateId: (templates.length > 0 ? templates[0].id : -1),
+			});
 		}).catch(error => {
 			console.log('Failed to load templates for', tenantName, ':', error);
 			this.setState({templates : []});
@@ -93,6 +98,7 @@ export default class Tenant extends Component {
 		});
 	}
 
+
 	render() {
 
 		let {templates, devices} = this.state;
@@ -100,17 +106,24 @@ export default class Tenant extends Component {
 		let hasTemplates = templates.length > 0;
 		let hasDevices = devices.length > 0;
 
+		let {tenantName} = this.props;
+		let userName = 'admin';
+		let userPass = 'admin';
 
+		if(tenantName !== 'admin' ) {
+			userName = `${tenantName}_admin`;
+			userPass = 'temppwd';
+		}
 
 		return (
-			<div>
-				<h1>Tenant</h1>
-				<h2>{`${this.props.tenantName}`}</h2>
+			<SimpleCard>
+				<h2>{`Tenant ${tenantName}; user: ${userName} / pass: ${userPass}`}</h2>
 
 					{!hasStubTemplate && (<input type="button" value="+ Sample template" onClick={this.createSampleTemplate}/>)}
 
 					{hasTemplates && (
-			<div>
+				<SimpleCard>
+					<h2>Add device</h2>
 					<select onChange={(e) => { this.handleChange(e, 'selectedTemplateId'); }}>
 						{templates.map(template => {
 							return (
@@ -125,14 +138,16 @@ export default class Tenant extends Component {
 						})};
 
 					</select>
-				<input type="text" onChange={(e) => this.handleChange(e, 'newDeviceName')}/>
-				<input type="button" onClick={this.addDevice} value="+ Device"/>
-			</div>
-					
+					<input type="text" onChange={(e) => this.handleChange(e, 'newDeviceName')}/>
+					<input type="button" onClick={this.addDevice} value="+ Device"/>
+				</SimpleCard>
+				
 					)}
 
 					{hasDevices && (
-									<div>
+						<SimpleCard>
+							<h2>Devices</h2>
+
 									{this.state.devices.map((device) => {
 					return (
 						<Device 
@@ -141,13 +156,12 @@ export default class Tenant extends Component {
 							onDeviceMessage={this.handleDeviceMessage}
 							/>
 					);
-				})};
-					</div>
+				})}
+						</SimpleCard>
 					)}
 
-				<h1>/Tenant</h1>
-			</div>
+			</SimpleCard>
 		);
-
 	}
+
 }
