@@ -5,12 +5,18 @@ export default class Device extends Component {
 	constructor(props) {
 		super(props);
 
-		let {onDeviceMessage, deviceId} = props;
+		let {onDeviceMessage, deviceData} = props;
+
+		let deviceId = deviceData.id;
+		let deviceName = deviceData.label;
+
+		console.log('loaded device', deviceData);
 
 		let message = {message: `hi from ${deviceId}`};
 
 		this.state = {
 			deviceId,
+			deviceName,
 			message,
 			onDeviceMessage,
 		}
@@ -37,14 +43,13 @@ export default class Device extends Component {
 	}
 
 	render() {
-		let deviceId = this.state.deviceId;
-		let defaultVal = this.state.message;
+		let {deviceId, deviceName, message} = this.state;
 
 		return (
 			<div>
-				<h2>{`Device ${deviceId}`}</h2>
+				<h2>{`Device ${deviceName} (${deviceId})`}</h2>
 				<textarea
-					defaultValue={JSON.stringify(defaultVal)}
+					defaultValue={JSON.stringify(message)}
 					onChange={this.handleChange}
 					>
 				</textarea>
