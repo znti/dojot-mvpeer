@@ -33,6 +33,19 @@ function handleApiCall(exec, res) {
 	});
 }
 
+
+/*
+ * Debug
+ */
+
+app.get('/ping', (req, res) => {
+	res.send('pong');
+});
+
+app.get('/', (req, res) => {
+	res.send('omgomgomgomgomgomgogmogm');
+});
+
 /*
  * Tenant management endpoint
  */

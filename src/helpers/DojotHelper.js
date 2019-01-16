@@ -1,5 +1,8 @@
 const HttpHelper = require('./HttpHelper');
 
+const iotalib = require('@dojot/iotagent-nodejs');
+
+
 module.exports = class DojotHelper {
 
 	constructor(configss) {
@@ -18,12 +21,15 @@ module.exports = class DojotHelper {
 
 		this.dojotEndpoint = dojotEndpoint;
 
-		let iotAgentEndpoint = `${configss.iotAgent.host}:${configss.iotAgent.port}`
-		console.log('Building iotAgent helper from', iotAgentEndpoint);
-		this.iotAgentClient = new HttpHelper(iotAgentEndpoint);
+//		let iotAgentEndpoint = `${configss.iotAgent.host}:${configss.iotAgent.port}`
+//		console.log('Building iotAgent helper from', iotAgentEndpoint);
+//		this.iotAgentClient = new HttpHelper(iotAgentEndpoint);
 
+		this.iotAgentClient = new iotalib.IoTAgent('mvpeer');
 
-		this.getTenants().then(tenants => {
+		this.iotAgentClient.init().then(() => {
+			console.log('Initialized iot agent');
+			this.getTenants().then(tenants => {
 
 //			let tenants = response.data.tenants;
 			console.log('Retrieved tenants', tenants);
@@ -44,6 +50,7 @@ module.exports = class DojotHelper {
 			let credentials = {username, passwd};
 
 			this.setTenantClient(tenantName, credentials);
+		});
 		});
 	});
 
@@ -106,10 +113,16 @@ module.exports = class DojotHelper {
 	}
 
 
-	sendDeviceMessage(tenant, deviceId, message) { 
-		console.log('Sending message', message, 'to device', deviceId, 'on tenant', tenant);
-		let endpoint = `/tenants/${tenant}/devices/${deviceId}/messages`;
-		return this.iotAgentClient.post(endpoint, message)
+	sendDeviceMessage(tenantName, deviceId, message) { 
+		console.log('Sending message', message, 'to device', deviceId, 'on tenant', tenantName);
+		let metadata = {
+			timestamp: Date.now(),
+		}
+		this.iotAgentClient.updateAttrs(deviceId, tenantName, message, metadata);
+		Promise.resolve({deviceId, tenantName, message, metadata});
+
+//		let endpoint = `/tenants/${tenant}/devices/${deviceId}/messages`;
+//		return this.iotAgentClient.post(endpoint, message)
 			//.then(response => {
 			//return Promise.resolve(tenants);
 		//});
@@ -178,13 +191,16 @@ module.exports = class DojotHelper {
 	}
 
 	getTenants() {
-		let endpoint = '/tenants';
-		return this.iotAgentClient.get(endpoint).then(response => {
-			let tenants = response.data.tenants;	
-			let newTenants = tenants.map(t => { return {name:t} });
-			console.log('Transformed', tenants, 'to', newTenants);
-			return Promise.resolve(newTenants);
-		});
+		let tenants = this.iotAgentClient.messenger.tenants;
+		return Promise.resolve(tenants);
+
+	//	let endpoint = '/tenants';
+	//	return this.iotAgentClient.get(endpoint).then(response => {
+	//		let tenants = response.data.tenants;	
+	//		let newTenants = tenants.map(t => { return {name:t} });
+	//		console.log('Transformed', tenants, 'to', newTenants);
+	//		return Promise.resolve(newTenants);
+	//	});
 	}
 
 }
