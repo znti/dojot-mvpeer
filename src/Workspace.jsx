@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Tenant from './Tenant';
 
 export default class Workspace extends Component {
+	static displayName = 'Workspace';
 
 	handleChange = (event, fieldName) => {
 		let newData = event.target.value;

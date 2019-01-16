@@ -58,7 +58,7 @@ function ClippedDrawer(props) {
       >
         <div className={classes.toolbar} />
 
-	{props.children.find(c => c.type.name === 'Toolbar')}
+	{props.children.find(c => c.type.displayName === 'Toolbar')}
 
         <Divider />
 
@@ -66,7 +66,7 @@ function ClippedDrawer(props) {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Typography paragraph>
-	  {props.children.find(c => c.type.name === 'Workspace')}
+	  {props.children.find(c => c.type.displayName === 'Workspace')}
         </Typography>
       </main>
     </div>

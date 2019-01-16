@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import SimpleCard from './mui/SimpleCard';
 
 export default class Toolbar extends Component {
+	static displayName = 'Toolbar';
 
 	handleChange = (event, fieldName) => {
 		let newData = event.target.value;
