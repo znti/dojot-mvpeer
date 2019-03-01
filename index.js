@@ -43,7 +43,7 @@ app.get('/ping', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-	res.send('omgomgomgomgomgomgogmogm');
+	res.redirect('/app');
 });
 
 /*

@@ -21,38 +21,35 @@ module.exports = class DojotHelper {
 
 		this.dojotEndpoint = dojotEndpoint;
 
-//		let iotAgentEndpoint = `${configss.iotAgent.host}:${configss.iotAgent.port}`
-//		console.log('Building iotAgent helper from', iotAgentEndpoint);
-//		this.iotAgentClient = new HttpHelper(iotAgentEndpoint);
-
 		this.iotAgentClient = new iotalib.IoTAgent('mvpeer');
 
 		this.iotAgentClient.init().then(() => {
 			console.log('Initialized iot agent');
-			this.getTenants().then(tenants => {
-
-//			let tenants = response.data.tenants;
-			console.log('Retrieved tenants', tenants);
-
-
+			return this.getTenants();
+				//.then(tenants => {
+//				console.log('Retrieved tenants', tenants);
+//				return tenants;
+//			});
+		}).then(tenants => {
+			console.log('Setting clients for each tenant');
 			tenants.map(tenant => {
+				console.log('Preparing client for tenant', tenant);
 
-			let tenantName = tenant.name;
+				let tenantName = tenant;
 
-			let username = 'admin';
-			let passwd = 'admin';
+				let username = 'admin';
+				let passwd = 'admin';
 
-			if(tenantName !== 'admin') {
-				username = `${tenantName}_admin`;
-				passwd = 'temppwd';
-			}
+				if(tenantName !== 'admin') {
+					username = `${tenantName}_admin`;
+					passwd = 'temppwd';
+				}
 
-			let credentials = {username, passwd};
+				let credentials = {username, passwd};
 
-			this.setTenantClient(tenantName, credentials);
+				this.setTenantClient(tenantName, credentials);
+			});
 		});
-		});
-	});
 
 	}
 
@@ -72,8 +69,7 @@ module.exports = class DojotHelper {
 					console.log('Failed to set auth token on', tenantName, message);
 				});
 			}).catch(error => {
-				let message = error.response.data.message;
-				console.log('Failed to authenticate for', tenantName, ':', message);
+				console.log('Failed to authenticate for', tenantName, ':', error);
 			});
 		
 	}
